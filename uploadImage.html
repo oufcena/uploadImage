@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<input class='upload'>
+
+<input class='upload'>
+
+<script>
+function upload() {
+  var x = document.getElementsByClassName('upload');
+  
+  [...x].map( (v, i) => {
+    v.outerHTML = `
+      <input multiple type="file" class="upload" 
+        onchange="
+        var target, files, reader=[]; 
+        target = this.nextElementSibling
+                     .getElementsByTagName('img');    
+        files = [...this.files];
+      
+        this.nextElementSibling.innerHTML = 
+        '<img class=resize style=width:100%;margin:1%auto;>'
+        .repeat(files.length); 
+                
+        files.forEach((v, i) => {
+          reader[i] = new FileReader();
+          reader[i].readAsDataURL(v);
+          reader[i].onload = function() {
+            files.forEach((v, i) => {
+              target[i].src = reader[i].result;
+            });
+            resize();
+          };           
+        });
+        
+
+      ">
+      <p></p> 
+    `;            
+  }); 
+} upload();
+function resize() {
+  var x = document.getElementsByClassName('resize');
+  
+  [...x].forEach(v => {
+    v.style.cssText = `  
+    display: block;
+    width: 100%;
+    `;
+
+    if(!v.parentElement.style.cssText.includes('resize: both')) {
+      v.outerHTML = `<div style="  
+      position: relative;
+      border: 2px solid;
+      width: 50%;
+      resize: both;
+      overflow: hidden;">${v.outerHTML}</div><p></p>`;
+    }
+  });
+} resize();
+</script>
+
+</body>
+</html>
